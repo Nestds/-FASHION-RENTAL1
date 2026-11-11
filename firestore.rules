@@ -1,0 +1,123 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default Deny All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'natpapattep@gmail.com' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
+      );
+    }
+
+    // 1. Users collection
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isSignedIn() && request.auth.uid == userId &&
+        request.resource.data.keys().hasAll(['uid', 'fullName', 'email', 'role', 'createdAt']) &&
+        (request.resource.data.role == 'member' || isAdmin());
+      allow update: if (isOwner(userId) &&
+        request.resource.data.role == resource.data.role && // Cannot escalate role
+        request.resource.data.uid == resource.data.uid &&
+        request.resource.data.createdAt == resource.data.createdAt
+      ) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // 2. Categories
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // 3. Products
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // 4. Sizes
+    match /sizes/{sizeId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // 5. ProductSizes (Inventory per size)
+    match /productSizes/{productSizeId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // 6. Bookings
+    match /bookings/{bookingId} {
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid &&
+        request.resource.data.keys().hasAll(['bookingId', 'bookingCode', 'userId', 'startDate', 'endDate', 'subtotal', 'deposit', 'totalAmount', 'bookingStatus', 'createdAt']);
+      allow update: if isAdmin() || (
+        isSignedIn() && resource.data.userId == request.auth.uid &&
+        // User can only update bookingStatus during cancellation or slip submission
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['bookingStatus', 'notes', 'updatedAt'])
+      );
+      allow delete: if isAdmin();
+    }
+
+    // 7. BookingDetails
+    match /bookingDetails/{detailId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    // 8. Payments
+    match /payments/{paymentId} {
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // 9. RentalReturns
+    match /rentalReturns/{returnId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // 10. Reviews
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+    }
+
+    // 11. Promotions
+    match /promotions/{promotionId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // 12. Favorites
+    match /favorites/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+  }
+}

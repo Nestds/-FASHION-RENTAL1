@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-bg: #FDF9F9;
+    --color-surface: #FFFFFF;
+    --color-primary: #B26571;
+    --color-primary-dark: #8F4954;
+    --color-primary-light: #F7ECEE;
+    --color-secondary: #F3E5E7;
+    --color-accent: #D48C95;
+    --color-text: #2C2123;
+    --color-muted: #7E6D70;
+    --color-border: #EED8DC;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: 'Prompt', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, .font-serif-luxury {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    letter-spacing: 0.015em;
+  }
+}
+
+/* Custom Rose Luxury Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FDF9F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #D48C95;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B26571;
+}
+
+/* Luxury Rose Gold Gradients & Card Styles */
+.bg-rose-luxury {
+  background: linear-gradient(135deg, #B26571 0%, #9C515D 100%);
+}
+.bg-rose-soft {
+  background: linear-gradient(180deg, #FFFFFF 0%, #FDF4F5 100%);
+}
+.border-rose-subtle {
+  border-color: rgba(221, 167, 175, 0.35);
+}
+.shadow-rose-glow {
+  box-shadow: 0 12px 36px -10px rgba(178, 101, 113, 0.12);
+}
+.shadow-card-soft {
+  box-shadow: 0 4px 20px -2px rgba(178, 101, 113, 0.06);
+}

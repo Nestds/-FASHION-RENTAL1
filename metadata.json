@@ -1,0 +1,6 @@
+{
+  "name": "DRESSÉ – Fashion & Evening Dress Rental",
+  "description": "เว็บไซต์ให้บริการเช่าชุดแฟชั่นและชุดราตรีระดับพรีเมียม พร้อมระบบจอง ตรวจสอบวันว่าง ชำระเงิน และระบบผู้ดูแลระบบ",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

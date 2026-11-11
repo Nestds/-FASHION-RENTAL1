@@ -1,0 +1,239 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role and contact information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "fullName": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 120 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "address": { "type": "string", "maxLength": 300 },
+        "role": { "type": "string", "enum": ["member", "admin"] },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["uid", "fullName", "email", "role", "createdAt"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Product categories for fashion dresses",
+      "type": "object",
+      "properties": {
+        "categoryId": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 300 },
+        "imageUrl": { "type": "string", "maxLength": 1000 },
+        "isActive": { "type": "boolean" }
+      },
+      "required": ["categoryId", "name", "isActive"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Fashion & evening dress rental inventory item",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string", "maxLength": 64 },
+        "productCode": { "type": "string", "maxLength": 32 },
+        "name": { "type": "string", "maxLength": 150 },
+        "categoryId": { "type": "string", "maxLength": 64 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "color": { "type": "string", "maxLength": 50 },
+        "rentalPrice": { "type": "number" },
+        "depositPrice": { "type": "number" },
+        "images": { "type": "array" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "maxLength": 50 },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["productId", "productCode", "name", "categoryId", "rentalPrice", "depositPrice", "isActive"]
+    },
+    "Size": {
+      "title": "Size",
+      "description": "Apparel size standard definition",
+      "type": "object",
+      "properties": {
+        "sizeId": { "type": "string", "maxLength": 32 },
+        "name": { "type": "string", "maxLength": 20 },
+        "description": { "type": "string", "maxLength": 200 }
+      },
+      "required": ["sizeId", "name"]
+    },
+    "ProductSize": {
+      "title": "ProductSize",
+      "description": "Inventory quantity link between dress and specific size",
+      "type": "object",
+      "properties": {
+        "productSizeId": { "type": "string", "maxLength": 64 },
+        "productId": { "type": "string", "maxLength": 64 },
+        "sizeId": { "type": "string", "maxLength": 32 },
+        "quantity": { "type": "number" }
+      },
+      "required": ["productSizeId", "productId", "sizeId", "quantity"]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "Rental reservation order header",
+      "type": "object",
+      "properties": {
+        "bookingId": { "type": "string", "maxLength": 64 },
+        "bookingCode": { "type": "string", "maxLength": 32 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "startDate": { "type": "string", "maxLength": 30 },
+        "endDate": { "type": "string", "maxLength": 30 },
+        "subtotal": { "type": "number" },
+        "discount": { "type": "number" },
+        "deposit": { "type": "number" },
+        "totalAmount": { "type": "number" },
+        "bookingStatus": {
+          "type": "string",
+          "enum": ["pending_payment", "payment_review", "confirmed", "in_rental", "returned", "cancelled", "rejected"]
+        },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["bookingId", "bookingCode", "userId", "startDate", "endDate", "subtotal", "deposit", "totalAmount", "bookingStatus", "createdAt"]
+    },
+    "BookingDetail": {
+      "title": "BookingDetail",
+      "description": "Line items for reservation specifying item snapshot",
+      "type": "object",
+      "properties": {
+        "detailId": { "type": "string", "maxLength": 64 },
+        "bookingId": { "type": "string", "maxLength": 64 },
+        "productId": { "type": "string", "maxLength": 64 },
+        "productName": { "type": "string", "maxLength": 150 },
+        "sizeId": { "type": "string", "maxLength": 32 },
+        "sizeName": { "type": "string", "maxLength": 20 },
+        "quantity": { "type": "number" },
+        "rentalPrice": { "type": "number" },
+        "depositPrice": { "type": "number" }
+      },
+      "required": ["detailId", "bookingId", "productId", "productName", "sizeId", "quantity", "rentalPrice", "depositPrice"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "description": "Bank transfer payment slip submission and review",
+      "type": "object",
+      "properties": {
+        "paymentId": { "type": "string", "maxLength": 64 },
+        "bookingId": { "type": "string", "maxLength": 64 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "amount": { "type": "number" },
+        "paymentMethod": { "type": "string", "maxLength": 30 },
+        "slipUrl": { "type": "string", "maxLength": 2000 },
+        "paymentStatus": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "reviewedBy": { "type": "string", "maxLength": 128 },
+        "reviewedAt": { "type": "string", "maxLength": 50 },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["paymentId", "bookingId", "userId", "amount", "paymentMethod", "slipUrl", "paymentStatus", "createdAt"]
+    },
+    "RentalReturn": {
+      "title": "RentalReturn",
+      "description": "Return inspection, condition logging, and deposit refunding",
+      "type": "object",
+      "properties": {
+        "returnId": { "type": "string", "maxLength": 64 },
+        "bookingId": { "type": "string", "maxLength": 64 },
+        "actualReturnDate": { "type": "string", "maxLength": 30 },
+        "returnCondition": { "type": "string", "enum": ["good", "minor_damage", "major_damage", "dirty"] },
+        "lateFee": { "type": "number" },
+        "damageFee": { "type": "number" },
+        "depositRefund": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending_inspection", "inspected", "refunded", "completed"] }
+      },
+      "required": ["returnId", "bookingId", "actualReturnDate", "returnCondition", "lateFee", "damageFee", "depositRefund", "status"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Customer feedback and star rating for rented dress",
+      "type": "object",
+      "properties": {
+        "reviewId": { "type": "string", "maxLength": 64 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "productId": { "type": "string", "maxLength": 64 },
+        "bookingId": { "type": "string", "maxLength": 64 },
+        "rating": { "type": "number" },
+        "comment": { "type": "string", "maxLength": 1000 },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["reviewId", "userId", "productId", "rating", "comment", "createdAt"]
+    },
+    "Promotion": {
+      "title": "Promotion",
+      "description": "Promotional discounts and coupon codes",
+      "type": "object",
+      "properties": {
+        "promotionId": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "maxLength": 100 },
+        "discountType": { "type": "string", "enum": ["percentage", "fixed"] },
+        "discountValue": { "type": "number" },
+        "startDate": { "type": "string", "maxLength": 30 },
+        "endDate": { "type": "string", "maxLength": 30 },
+        "isActive": { "type": "boolean" }
+      },
+      "required": ["promotionId", "name", "discountType", "discountValue", "isActive"]
+    },
+    "Favorite": {
+      "title": "Favorite",
+      "description": "User saved wishlist product IDs",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "productIds": { "type": "array" },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["userId", "productIds", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Stores user profile and role details"
+    },
+    "/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Fashion dress categories"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Dress catalog items"
+    },
+    "/sizes/{sizeId}": {
+      "schema": "Size",
+      "description": "Size master records"
+    },
+    "/productSizes/{productSizeId}": {
+      "schema": "ProductSize",
+      "description": "Stock count per dress and size"
+    },
+    "/bookings/{bookingId}": {
+      "schema": "Booking",
+      "description": "Customer reservations"
+    },
+    "/bookingDetails/{detailId}": {
+      "schema": "BookingDetail",
+      "description": "Line items for bookings"
+    },
+    "/payments/{paymentId}": {
+      "schema": "Payment",
+      "description": "Payment records and slip verification"
+    },
+    "/rentalReturns/{returnId}": {
+      "schema": "RentalReturn",
+      "description": "Return records and deposit settlement"
+    },
+    "/reviews/{reviewId}": {
+      "schema": "Review",
+      "description": "Product customer reviews"
+    },
+    "/promotions/{promotionId}": {
+      "schema": "Promotion",
+      "description": "Promotional campaigns and coupons"
+    },
+    "/favorites/{userId}": {
+      "schema": "Favorite",
+      "description": "Customer wishlist"
+    }
+  }
+}

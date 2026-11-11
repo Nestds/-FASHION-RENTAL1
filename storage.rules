@@ -1,0 +1,23 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Default deny
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    // Payment slips: Users can upload slips for their bookings; Admin can read all
+    match /slips/{userId}/{bookingId}/{fileName} {
+      allow write: if request.auth != null && request.auth.uid == userId
+                   && request.resource.size < 10 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+      allow read: if request.auth != null && (request.auth.uid == userId || request.auth.token.email == 'natpapattep@gmail.com');
+    }
+
+    // Product images: Admin can upload and modify; Public can view
+    match /products/{fileName} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.email == 'natpapattep@gmail.com';
+    }
+  }
+}
